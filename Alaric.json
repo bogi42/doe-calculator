@@ -1,0 +1,653 @@
+{
+  "name": "Alaric Nachtmoor",
+  "level": 30,
+  "experience": 2042,
+  "base_attributes": {
+    "Body": 265.0,
+    "Spirit": 659.0,
+    "Mind": 343.0
+  },
+  "body_attunement": {
+    "element": "Eclipse",
+    "title": "Pioneer of Twilight"
+  },
+  "mind_attunement": {
+    "element": "Light",
+    "title": "Paragon of Hope"
+  },
+  "spirit_attunement": {
+    "element": "Shadow",
+    "title": "Harbinger of Dread"
+  },
+  "professions": [
+    {
+      "name": "Eclipsed Initiate",
+      "level": 0,
+      "lvlup_body": 10.0,
+      "lvlup_mind": 11.0,
+      "lvlup_spirit": 12.0,
+      "lvlup_free": 10.0,
+      "profession_specific_modifiers": []
+    },
+    {
+      "name": "Bone Engraver",
+      "level": 2,
+      "lvlup_body": 2.0,
+      "lvlup_mind": 1.0,
+      "lvlup_spirit": 2.0,
+      "lvlup_free": 0.0,
+      "profession_specific_modifiers": []
+    },
+    {
+      "name": "Aetheric Engineer",
+      "level": 2,
+      "lvlup_body": 2.0,
+      "lvlup_mind": 5.0,
+      "lvlup_spirit": 4.0,
+      "lvlup_free": 0.0,
+      "profession_specific_modifiers": [
+        {
+          "target_attribute": "HealthRegen",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        },
+        {
+          "target_attribute": "ManaRegen",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        },
+        {
+          "target_attribute": "StaminaRegen",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        }
+      ]
+    }
+  ],
+  "equipped_gear": [
+    {
+      "name": "Eclipse (left Ulna)",
+      "gear_type": "BoneGlyph",
+      "modifiers": [
+        {
+          "target_attribute": "BasicDamageMelee",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "BasicDamageRanged",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "BasicDamageMagic",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "HealthRegen",
+          "modifier_type": "Percentage",
+          "value": 1.0
+        },
+        {
+          "target_attribute": "ManaRegen",
+          "modifier_type": "Percentage",
+          "value": 1.0
+        },
+        {
+          "target_attribute": "StaminaRegen",
+          "modifier_type": "Percentage",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "name": "Vexis (right Ulna)",
+      "gear_type": "BoneGlyph",
+      "modifiers": [
+        {
+          "target_attribute": "HealthRegen",
+          "modifier_type": "Percentage",
+          "value": 1.0
+        },
+        {
+          "target_attribute": "ManaRegen",
+          "modifier_type": "Percentage",
+          "value": 1.0
+        },
+        {
+          "target_attribute": "StaminaRegen",
+          "modifier_type": "Percentage",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "name": "Tenaxis (thorax)",
+      "gear_type": "BoneGlyph",
+      "modifiers": [
+        {
+          "target_attribute": "PhysicalResistance",
+          "modifier_type": "Percentage",
+          "value": 0.5
+        },
+        {
+          "target_attribute": "MentalResilience",
+          "modifier_type": "Percentage",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Harbinger of Dread",
+      "gear_type": "Attunement",
+      "modifiers": [
+        {
+          "target_attribute": "BasicDamageMagic",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "PhysicalResistance",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "MentalResilience",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "name": "Paragon of Hope",
+      "gear_type": "Attunement",
+      "modifiers": [
+        {
+          "target_attribute": "BasicDamageMagic",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "Mana",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "ManaRegen",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "name": "Pioneer of Twilight",
+      "gear_type": "Attunement",
+      "modifiers": [
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Percentage",
+          "value": 0.5
+        },
+        {
+          "target_attribute": "PhysicalResistance",
+          "modifier_type": "Percentage",
+          "value": 0.5
+        },
+        {
+          "target_attribute": "BasicDamageMelee",
+          "modifier_type": "Percentage",
+          "value": 0.25
+        }
+      ]
+    },
+    {
+      "name": "Dwarven Boots of Ass-Kicking",
+      "gear_type": "Equipment",
+      "modifiers": [
+        {
+          "target_attribute": "StaminaRegen",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        },
+        {
+          "target_attribute": "BasicDamageMelee",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "name": "Dwarven Spellslinger Pants",
+      "gear_type": "Equipment",
+      "modifiers": [
+        {
+          "target_attribute": "PhysicalResistance",
+          "modifier_type": "Fixed",
+          "value": 50.0
+        },
+        {
+          "target_attribute": "MentalResilience",
+          "modifier_type": "Fixed",
+          "value": 50.0
+        },
+        {
+          "target_attribute": "ManaRegen",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        }
+      ]
+    },
+    {
+      "name": "Ultimate Dwarven Leather Jacket of Readiness (halves cooldowns)",
+      "gear_type": "Equipment",
+      "modifiers": [
+        {
+          "target_attribute": "PhysicalResistance",
+          "modifier_type": "Fixed",
+          "value": 50.0
+        },
+        {
+          "target_attribute": "MentalResilience",
+          "modifier_type": "Fixed",
+          "value": 50.0
+        },
+        {
+          "target_attribute": "Stamina",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        },
+        {
+          "target_attribute": "StaminaRegen",
+          "modifier_type": "Fixed",
+          "value": 20.0
+        }
+      ]
+    },
+    {
+      "name": "Eye of the Tiger (amulet)",
+      "gear_type": "Equipment",
+      "modifiers": [
+        {
+          "target_attribute": "Mind",
+          "modifier_type": "Percentage",
+          "value": 0.25
+        },
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Fixed",
+          "value": 25.0
+        }
+      ]
+    },
+    {
+      "name": "The Eidolon Stylus (Rank 2)",
+      "gear_type": "Equipment",
+      "modifiers": [
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        },
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Percentage",
+          "value": 0.2
+        }
+      ]
+    },
+    {
+      "name": "We haven't even started yet",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Fixed",
+          "value": 5.0
+        },
+        {
+          "target_attribute": "Mind",
+          "modifier_type": "Fixed",
+          "value": 5.0
+        },
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Fixed",
+          "value": 5.0
+        },
+        {
+          "target_attribute": "Health",
+          "modifier_type": "Fixed",
+          "value": 10.0
+        }
+      ]
+    },
+    {
+      "name": "Death Wish",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "HealthRegen",
+          "modifier_type": "Fixed",
+          "value": 20.0
+        },
+        {
+          "target_attribute": "Health",
+          "modifier_type": "Percentage",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Scrappy Survivor",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Stamina",
+          "modifier_type": "Fixed",
+          "value": 50.0
+        },
+        {
+          "target_attribute": "StaminaRegen",
+          "modifier_type": "Percentage",
+          "value": 0.25
+        }
+      ]
+    },
+    {
+      "name": "Master of my Mind",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Mind",
+          "modifier_type": "Fixed",
+          "value": 5.0
+        },
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Fixed",
+          "value": 5.0
+        }
+      ]
+    },
+    {
+      "name": "System Exploiter (scaling)",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Fixed",
+          "value": 0.0
+        },
+        {
+          "target_attribute": "Mind",
+          "modifier_type": "Fixed",
+          "value": 0.0
+        },
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Fixed",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Codebreaker",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "PhysicalResistance",
+          "modifier_type": "Percentage",
+          "value": 0.25
+        },
+        {
+          "target_attribute": "MentalResilience",
+          "modifier_type": "Percentage",
+          "value": 0.25
+        }
+      ]
+    },
+    {
+      "name": "Seeker of Truths",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Percentage",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "name": "Titan's Bane",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Fixed",
+          "value": 25.0
+        },
+        {
+          "target_attribute": "Mind",
+          "modifier_type": "Fixed",
+          "value": 25.0
+        },
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Fixed",
+          "value": 25.0
+        }
+      ]
+    },
+    {
+      "name": "Soul of the Party",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Percentage",
+          "value": 0.25
+        }
+      ]
+    },
+    {
+      "name": "Who's the bully now?",
+      "gear_type": "Title",
+      "modifiers": [
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Percentage",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "name": "Aurelius (scales with Aury's Level)",
+      "gear_type": "Bond",
+      "modifiers": [
+        {
+          "target_attribute": "Body",
+          "modifier_type": "Fixed",
+          "value": 38.0
+        },
+        {
+          "target_attribute": "Mind",
+          "modifier_type": "Fixed",
+          "value": 38.0
+        },
+        {
+          "target_attribute": "Spirit",
+          "modifier_type": "Fixed",
+          "value": 38.0
+        }
+      ]
+    }
+  ],
+  "spells": [
+    {
+      "name": "Umbral Judgement",
+      "spell_type": "Damage",
+      "mana_cost": 1500.0,
+      "cooldown": "7.5 minutes",
+      "used_attribute": "BasicDamageMagic",
+      "factor": 10.0,
+      "control_effect": "",
+      "additional_effect": "might damage close targets"
+    },
+    {
+      "name": "Umbral Volley",
+      "spell_type": "Damage",
+      "mana_cost": 75.0,
+      "cooldown": "0.5 seconds",
+      "used_attribute": "BasicDamageMagic",
+      "factor": 1.0,
+      "control_effect": "",
+      "additional_effect": "creates 5 auto-aiming darts"
+    },
+    {
+      "name": "Shadow Nova",
+      "spell_type": "Damage",
+      "mana_cost": 1000.0,
+      "cooldown": "7.5 Minutes",
+      "used_attribute": "BasicDamageMagic",
+      "factor": 5.0,
+      "control_effect": "",
+      "additional_effect": "AoE - 5 m around caster"
+    },
+    {
+      "name": "Umbral Chains",
+      "spell_type": "Damage",
+      "mana_cost": 750.0,
+      "cooldown": "30 Seconds",
+      "used_attribute": "BasicDamageMagic",
+      "factor": 1.0,
+      "control_effect": "",
+      "additional_effect": "entangles enemy for 30 s"
+    },
+    {
+      "name": "Call of the Shadows",
+      "spell_type": "Control",
+      "mana_cost": 500.0,
+      "cooldown": "1 Minute",
+      "used_attribute": null,
+      "factor": 0.0,
+      "control_effect": "immerses everything around the caster in shadows",
+      "additional_effect": "radius 25 m, Duration: 1 Minute"
+    },
+    {
+      "name": "Healing Light",
+      "spell_type": "Healing",
+      "mana_cost": 250.0,
+      "cooldown": "2.5 Minutes",
+      "used_attribute": "BasicDamageMagic",
+      "factor": 2.0,
+      "control_effect": "",
+      "additional_effect": "removes negatives effects (i.e. poison)"
+    },
+    {
+      "name": "Healing Touch",
+      "spell_type": "Healing",
+      "mana_cost": 100.0,
+      "cooldown": "30 Seconds",
+      "used_attribute": "BasicDamageMagic",
+      "factor": 1.0,
+      "control_effect": "",
+      "additional_effect": ""
+    },
+    {
+      "name": "Umbral Lance",
+      "spell_type": "Damage",
+      "mana_cost": 500.0,
+      "cooldown": "instant",
+      "used_attribute": "BasicDamageMelee",
+      "factor": 5.0,
+      "control_effect": "",
+      "additional_effect": "when attacking with a bladed weapon"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Phantom Reclamation",
+      "stamina_cost": 0.5,
+      "cooldown": "instant",
+      "main_effect": "takes essences from fallen foes",
+      "additional_effect": "generates Health/Mana/Stamina/Authority"
+    },
+    {
+      "name": "Umbral Journey",
+      "stamina_cost": 30.0,
+      "cooldown": "instant",
+      "main_effect": "50 m teleport",
+      "additional_effect": "can include others (on touch)"
+    },
+    {
+      "name": "Shadow Infusion",
+      "stamina_cost": 0.0,
+      "cooldown": "",
+      "main_effect": "adds 5 % Dmg/Second to attacks",
+      "additional_effect": "Duration: 3 seconds"
+    },
+    {
+      "name": "Shadow Decoy",
+      "stamina_cost": 100.0,
+      "cooldown": "15 Seconds",
+      "main_effect": "creates an autonomous clone of the caster",
+      "additional_effect": "Clone can be created within 2 meters of the caster"
+    },
+    {
+      "name": "Shadow Switch",
+      "stamina_cost": 250.0,
+      "cooldown": "15 seconds",
+      "main_effect": "switch place with a Shadow Decoy",
+      "additional_effect": "range for switch: 15 m"
+    },
+    {
+      "name": "Nether Shroud",
+      "stamina_cost": 0.0,
+      "cooldown": "",
+      "main_effect": "invisible while in shadows",
+      "additional_effect": "obfuscated in twilight / bad lighting"
+    },
+    {
+      "name": "Equinox Reaver",
+      "stamina_cost": 0.0,
+      "cooldown": "",
+      "main_effect": "unseen strikes are always critical hits",
+      "additional_effect": "(a critical hit doubles the damage)"
+    }
+  ],
+  "weapons": [
+    {
+      "name": "The Eidolon Stylus",
+      "weapon_type": "Melee",
+      "used_attribute": "BasicDamageMelee",
+      "factor": 3.0,
+      "description": "Kris-mode"
+    },
+    {
+      "name": "The Eidolon Stylus",
+      "weapon_type": "Ranged",
+      "used_attribute": "BasicDamageRanged",
+      "factor": 4.0,
+      "description": "eight-shooter-mode"
+    }
+  ],
+  "traits": [
+    {
+      "description": "Omniscient Perception"
+    },
+    {
+      "description": "Omnilingual [non-System entry]"
+    },
+    {
+      "description": "Natural Immunity against Poison"
+    },
+    {
+      "description": "Natural Immunity against Acid"
+    },
+    {
+      "description": "Natural Immunity against Mental Manipulation"
+    }
+  ],
+  "file_path": "/home/bogi/Dokumente/ebooks/eclipse003/Alaric.json"
+}
