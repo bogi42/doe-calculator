@@ -1,0 +1,14 @@
+[package]
+name = "doe_calculator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] } # serialization/deserialization
+serde_json = "1.0" # JSON-specific serialization/deserialization
+colored = "2.0" # use colors on terminal
+rustyline = "16.0"
+advanced_inputs = { path = "../advanced_inputs" } # my own library
+strum = "0.26"
+strum_macros = "0.26"
+thousands = "0.2.0"
