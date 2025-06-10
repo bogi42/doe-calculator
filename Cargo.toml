@@ -8,7 +8,8 @@ serde = { version = "1.0", features = ["derive"] } # serialization/deserializati
 serde_json = "1.0" # JSON-specific serialization/deserialization
 colored = "2.0" # use colors on terminal
 rustyline = "16.0"
-advanced_inputs = { path = "../advanced_inputs" } # my own library
+# advanced_inputs = { path = "../advanced_inputs" } # my own library
 strum = "0.26"
 strum_macros = "0.26"
 thousands = "0.2.0"
+advanced_inputs = { git = "https://github.com/bogi42/AdvInput-Rust.git" }

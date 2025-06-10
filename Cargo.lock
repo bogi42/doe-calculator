@@ -5,6 +5,7 @@ version = 4
 [[package]]
 name = "advanced_inputs"
 version = "0.1.0"
+source = "git+https://github.com/bogi42/AdvInput-Rust.git#e42f284623811a2a5e43513014b90b0d68c9e250"
 dependencies = [
  "colored",
  "rustyline",
