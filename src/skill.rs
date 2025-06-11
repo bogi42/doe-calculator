@@ -133,7 +133,7 @@ impl EditableItem for Skill {
 impl PrintableItem for Skill {
     fn pretty_print(&self, _character: &Character) -> String {
         format!(
-            "<b>{}:</b> {}<br/>╰╼({})<br/>{}",
+            "<b>{}:</b> {}<br/>╰╼{}<br/>{}",
             self.name,
             self.main_effect,
             self.get_cost_cd(),
