@@ -16,7 +16,7 @@ pub enum AttributeType {
     Body,
     Mind,
     Spirit,
-
+    Soul,
     // Derived Attributes (examples, you can add many more)
     Health,
     HealthRegen,
@@ -29,6 +29,7 @@ pub enum AttributeType {
     BasicDamageMelee,
     BasicDamageRanged,
     BasicDamageMagic,
+    BasicDamageSoul,
 }
 impl PromptableEnum for AttributeType {}
 

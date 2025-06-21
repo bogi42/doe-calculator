@@ -1,6 +1,7 @@
 use crate::attributes::{AttributeType, ModifierType}; // Import AttributeType and ModifierType from attributes module
 use crate::gear::{Gear, GearType}; // Import Gear and GearType from gear module
 use crate::interactive::{PrintableItem, PrintableItemVariant};
+use crate::notes::Note;
 use crate::profession::Profession;
 use crate::skill::Skill;
 use crate::spell::Spell;
@@ -32,6 +33,8 @@ pub struct Character {
     pub body_attunement: Option<Attunement>,
     pub mind_attunement: Option<Attunement>,
     pub spirit_attunement: Option<Attunement>,
+    #[serde(default)]
+    pub soul_attunement: Option<Attunement>,
     pub professions: Vec<Profession>,
     pub equipped_gear: Vec<Gear>,
     #[serde(default)]
@@ -40,6 +43,8 @@ pub struct Character {
     pub skills: Vec<Skill>,
     #[serde(default)]
     pub weapons: Vec<Weapon>,
+    #[serde(default)]
+    pub notes: Vec<Note>,
     pub traits: Vec<CharacterTrait>,
     pub file_path: PathBuf,
 }
@@ -93,12 +98,14 @@ impl Character {
             body_attunement: None,
             mind_attunement: None,
             spirit_attunement: None,
+            soul_attunement: None,
             professions: Vec::new(),
             equipped_gear: Vec::new(),
             spells: Vec::new(),
             skills: Vec::new(),
             traits: Vec::new(),
             weapons: Vec::new(),
+            notes: Vec::new(),
             file_path,
         }
     }
@@ -107,7 +114,10 @@ impl Character {
     pub fn set_base_attribute(&mut self, attr_type: AttributeType, value: f64) {
         /* only Body, Mind, and Spirit can be set directly */
         match attr_type {
-            AttributeType::Body | AttributeType::Mind | AttributeType::Spirit => {
+            AttributeType::Body
+            | AttributeType::Mind
+            | AttributeType::Spirit
+            | AttributeType::Soul => {
                 self.base_attributes.insert(attr_type, value);
             }
             _ => return,
@@ -132,11 +142,13 @@ impl Character {
             let mut body_up: f64 = 0.0;
             let mut mind_up: f64 = 0.0;
             let mut spirit_up: f64 = 0.0;
+            let mut soul_up: f64 = 0.0;
             let mut free_up: f64 = 0.0;
             for prof in &self.professions {
                 body_up += prof.lvlup_body;
                 mind_up += prof.lvlup_mind;
                 spirit_up += prof.lvlup_spirit;
+                soul_up += prof.lvlup_soul;
                 free_up += prof.lvlup_free;
             }
             println!("- fixed progressions from Professions:");
@@ -147,10 +159,11 @@ impl Character {
                 "Spirit".cyan(),
                 format!("{}", spirit_up).green()
             );
+            println!("  {}: {}", "Soul".cyan(), format!("{}", soul_up).green());
             println!("  {}: {}", "Free".cyan(), format!("{}", free_up).green());
             println!(
                 "Enter distribution for free points: {} (separated by spaces)",
-                "body mind spirit".green()
+                "body mind spirit soul".green()
             );
             loop {
                 let istr: Vec<String> = match advi.get_string("> ".green()) {
@@ -160,7 +173,7 @@ impl Character {
                         .collect(),
                     None => return (), // quit function
                 };
-                if istr.len() != 3 {
+                if istr.len() != 4 {
                     eprintln!("Wrong number of arguments, try again");
                     continue;
                 }
@@ -178,19 +191,26 @@ impl Character {
                         continue;
                     }
                 };
-                let free_spirit: f64 = match istr[1].parse::<f64>() {
+                let free_spirit: f64 = match istr[2].parse::<f64>() {
                     Ok(n) => n,
                     Err(_) => {
                         eprintln!("{}", "Invalid value for spirit, try again".red());
                         continue;
                     }
                 };
-                if free_spirit + free_mind + free_body != free_up {
+                let free_soul: f64 = match istr[3].parse::<f64>() {
+                    Ok(n) => n,
+                    Err(_) => {
+                        eprintln!("{}", "Invalid value for sould, try again".red());
+                        continue;
+                    }
+                };
+                if free_spirit + free_mind + free_body + free_soul != free_up {
                     eprintln!(
                         "{}",
                         format!(
-                            "Numbers don't add up: {} +  {}  + {} != {}",
-                            free_body, free_mind, free_spirit, free_up
+                            "Numbers don't add up: {} +  {}  + {} + {} != {}",
+                            free_body, free_mind, free_spirit, free_soul, free_up
                         )
                         .red()
                     );
@@ -200,12 +220,14 @@ impl Character {
                 body_up += free_body;
                 mind_up += free_mind;
                 spirit_up += free_spirit;
+                soul_up += free_soul;
                 /* change base values */
                 self.level += 1;
                 self.experience -= exp_needed;
                 self.add_to_attribute(AttributeType::Body, body_up);
                 self.add_to_attribute(AttributeType::Mind, mind_up);
                 self.add_to_attribute(AttributeType::Spirit, spirit_up);
+                self.add_to_attribute(AttributeType::Soul, soul_up);
                 if self.level <= 20 || self.level % 5 == 0 {
                     println!(
                         "{}",
@@ -236,11 +258,12 @@ impl Character {
     }
 
     pub fn get_base_attribute(&self, attribute: &AttributeType) -> f64 {
-        /* only Body, Mind, and Spirit can be set directly */
+        /* only Body, Mind, Spirit, and Soul can be gotten directly */
         match attribute {
-            AttributeType::Body | AttributeType::Mind | AttributeType::Spirit => {
-                *self.base_attributes.get(&attribute).unwrap_or(&0.0)
-            }
+            AttributeType::Body
+            | AttributeType::Mind
+            | AttributeType::Spirit
+            | AttributeType::Soul => *self.base_attributes.get(&attribute).unwrap_or(&0.0),
             _ => 0.0,
         }
     }
@@ -250,6 +273,7 @@ impl Character {
             AttributeType::Body => &self.body_attunement,
             AttributeType::Mind => &self.mind_attunement,
             AttributeType::Spirit => &self.spirit_attunement,
+            AttributeType::Soul => &self.soul_attunement,
             _ => &None,
         };
         if let Some(att) = att_option {
@@ -265,9 +289,10 @@ impl Character {
     /// The formula used is: (Base-Value + Fixed Modifiers) * (1 + sum of percentage modifiers).
     pub fn calculate_final_attribute(&self, attr_type: &AttributeType) -> f64 {
         let base_value = match attr_type {
-            AttributeType::Body | AttributeType::Mind | AttributeType::Spirit => {
-                self.get_base_attribute(attr_type)
-            }
+            AttributeType::Body
+            | AttributeType::Mind
+            | AttributeType::Spirit
+            | AttributeType::Soul => self.get_base_attribute(attr_type),
             AttributeType::Health => {
                 self.calculate_final_attribute(&AttributeType::Body) * 10.0
                     + self.level as f64 * 5.0
@@ -303,6 +328,9 @@ impl Character {
             AttributeType::BasicDamageRanged => {
                 self.calculate_final_attribute(&AttributeType::Body)
                     + self.calculate_final_attribute(&AttributeType::Mind)
+            }
+            AttributeType::BasicDamageSoul => {
+                self.calculate_final_attribute(&AttributeType::Soul) * 2.0
             }
         };
 
@@ -399,6 +427,19 @@ impl Character {
             self.get_attunement_string(&AttributeType::Spirit).italic()
         );
         print_line();
+        /* Soul line */
+        println!(
+            " {:>10}{:^15}{:8.0}{:>66}",
+            "Soul:".bold().green(),
+            format!(
+                "(Base: {:.0})",
+                self.get_base_attribute(&AttributeType::Soul)
+            )
+            .italic(),
+            self.calculate_final_attribute(&AttributeType::Soul),
+            self.get_attunement_string(&AttributeType::Soul).italic()
+        );
+        print_line();
         /* Health, Mana, Stamina */
         println!(
             " {:>25}{:8.0}{:>25}{:8.0}{:>25}{:8.0}",
@@ -420,24 +461,44 @@ impl Character {
         print_line();
         /* Base Damages */
         println!(
-            " {:>25}{:8.0}{:>25}{:8.0}{:>25}{:8.0}",
+            "Damage: {:>15}{:>8}{:>15}{:>8}{:>15}{:>8}{:15}{:>8}",
             "Melee",
-            self.calculate_final_attribute(&AttributeType::BasicDamageMelee),
+            format!(
+                "{:.0}",
+                self.calculate_final_attribute(&AttributeType::BasicDamageMelee)
+            )
+            .separate_with_commas(),
             "Ranged",
-            self.calculate_final_attribute(&AttributeType::BasicDamageRanged),
+            format!(
+                "{:.0}",
+                self.calculate_final_attribute(&AttributeType::BasicDamageRanged)
+            )
+            .separate_with_commas(),
             "Magic",
-            self.calculate_final_attribute(&AttributeType::BasicDamageMagic)
+            format!(
+                "{:.0}",
+                self.calculate_final_attribute(&AttributeType::BasicDamageMagic)
+            )
+            .separate_with_commas(),
+            "Soul",
+            format!(
+                "{:.0}",
+                self.calculate_final_attribute(&AttributeType::BasicDamageSoul)
+            )
+            .separate_with_commas()
         );
         print_line();
         /* Protection & Traits */
         println!(
-            " {:>25}{:8.0}{:>25}{:8.0}{:>25}{}",
+            " {:>25}{:8.0}{:>25}{:8.0}{:>12}{} {:>12}{}",
             "Physical Resistance",
             self.calculate_final_attribute(&AttributeType::PhysicalResistance),
             "Mental Resilience",
             self.calculate_final_attribute(&AttributeType::MentalResilience),
             "Traits:".bright_yellow(),
-            format!("{:8.0}", self.traits.len()).bright_yellow()
+            format!("{:4.0}", self.traits.len()).bright_yellow(),
+            "Notes:".bright_green(),
+            format!("{:4.0}", self.notes.len()).bright_green()
         );
         print_line();
         /* Spells and skills */
@@ -537,10 +598,10 @@ impl Character {
             (AttributeType::Stamina, AttributeType::StaminaRegen),
         ] {
             lines.push(format!(
-                "<b>{0}:</b> {1:.0}/{1:.0} ({2:.2}/s)<br/>",
+                "<b>{0}:</b> {1}/{1} ({2}/s)<br/>",
                 lhs,
-                self.calculate_final_attribute(&lhs),
-                self.calculate_final_attribute(&rhs)
+                format!("{:.0}", self.calculate_final_attribute(&lhs)).separate_with_commas(),
+                format!("{:.2}", self.calculate_final_attribute(&rhs)).separate_with_commas()
             ));
         }
         lines.push(format!("<span class=\"u\">Primary Attributes</span>"));
@@ -551,15 +612,15 @@ impl Character {
             AttributeType::Spirit,
         ] {
             lines.push(format!(
-                "<b>{}:</b> {} (base: {}<br/>",
+                "<b>{}:</b> {} (base: {})<br/>",
                 a,
                 format!("{:.0}", self.calculate_final_attribute(&a)).separate_with_commas(),
                 format!("{:.0}", self.get_base_attribute(&a)).separate_with_commas()
             ));
-            lines.push(format!("╰╼({})", self.get_attunement_string(&a)));
+            lines.push(format!("╰╼({})<br/>", self.get_attunement_string(&a)));
         }
         lines.push(format!("<span class=\"u\">Derived Attributes</span>"));
-        /* Resistances */
+        /* Resistances and Damage */
         for res in vec![
             AttributeType::PhysicalResistance,
             AttributeType::MentalResilience,
@@ -575,6 +636,22 @@ impl Character {
         }
         /* print multiple Lists of printabe items */
         for (item_type, item_list) in vec![
+            (
+                "Spell List",
+                &self
+                    .spells
+                    .iter()
+                    .map(|v| PrintableItemVariant::Spell(v.clone()))
+                    .collect(),
+            ),
+            (
+                "Skill List",
+                &self
+                    .skills
+                    .iter()
+                    .map(|v| PrintableItemVariant::Skill(v.clone()))
+                    .collect(),
+            ),
             (
                 "Attunements",
                 &self
@@ -600,22 +677,6 @@ impl Character {
                     .iter()
                     .filter(|g| g.gear_type == GearType::Bond)
                     .map(|v| PrintableItemVariant::Gear(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Spell List",
-                &self
-                    .spells
-                    .iter()
-                    .map(|v| PrintableItemVariant::Spell(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Skill List",
-                &self
-                    .skills
-                    .iter()
-                    .map(|v| PrintableItemVariant::Skill(v.clone()))
                     .collect(),
             ),
             (
@@ -650,6 +711,14 @@ impl Character {
                     .iter()
                     .filter(|g| g.gear_type == GearType::Title)
                     .map(|v| PrintableItemVariant::Gear(v.clone()))
+                    .collect(),
+            ),
+            (
+                "Notes",
+                &self
+                    .notes
+                    .iter()
+                    .map(|v| PrintableItemVariant::Note(v.clone()))
                     .collect(),
             ),
         ] {
