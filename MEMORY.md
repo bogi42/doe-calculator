@@ -1,0 +1,1 @@
+- [Print Character Sheet → Markdown Output](openspec/changes/print-character-sheet-markdown.md) — Change "Print Character Sheet" to output Markdown instead of HTML
