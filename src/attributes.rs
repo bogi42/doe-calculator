@@ -60,7 +60,14 @@ impl fmt::Display for Modifier {
                 },
                 "Points",
             ),
-            ModifierType::Percentage => (format!("{:.2}", self.value * 100.0), "Percent"),
+            ModifierType::Percentage => (
+                if self.value == 0.0 {
+                    format!("Level")
+                } else {
+                    format!("{:.2}", self.value * 100.0)
+                },
+                "Percent",
+            ),
         };
         write!(
             f,

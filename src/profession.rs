@@ -16,6 +16,8 @@ pub struct Profession {
     pub lvlup_body: f64,
     pub lvlup_mind: f64,
     pub lvlup_spirit: f64,
+    #[serde(default)]
+    pub lvlup_soul: f64,
     pub lvlup_free: f64,
     pub profession_specific_modifiers: Vec<Modifier>,
 }
@@ -26,16 +28,28 @@ impl fmt::Display for Profession {
         } else {
             "Class"
         };
+        let modlist = if self.profession_specific_modifiers.len() > 0 {
+            let mut list: Vec<String> = Vec::new();
+            list.push(String::from("\n"));
+            for m in &self.profession_specific_modifiers {
+                list.push(format!("{}", m));
+            }
+            list.join("\n")
+        } else {
+            String::new()
+        };
         write!(
             f,
-            "{} ({}) - {} specific modifiers\n- per Level: {} Body, {} Mind, {} Spirit, {} Free",
+            "{} ({}) - {} specific modifiers\n- per Level: {} Body, {} Mind, {} Spirit, {} Soul, {} Free {}",
             self.name.bold().cyan(),
             level,
             self.profession_specific_modifiers.len(),
             self.lvlup_body,
             self.lvlup_mind,
             self.lvlup_spirit,
-            self.lvlup_free
+            self.lvlup_soul,
+            self.lvlup_free,
+            modlist
         )
     }
 }
@@ -47,6 +61,7 @@ impl Profession {
         lvlup_body: f64,
         lvlup_mind: f64,
         lvlup_spirit: f64,
+        lvlup_soul: f64,
         lvlup_free: f64,
         profession_specific_modifiers: Vec<Modifier>,
     ) -> Self {
@@ -56,6 +71,7 @@ impl Profession {
             lvlup_body,
             lvlup_mind,
             lvlup_spirit,
+            lvlup_soul,
             lvlup_free,
             profession_specific_modifiers,
         }
@@ -87,6 +103,10 @@ impl EditableItem for Profession {
             Some(n) => n,
             None => return None,
         };
+        let lvlup_soul = match advi.get_f64("Points to Soul on Level-Up > ".cyan()) {
+            Some(n) => n,
+            None => return None,
+        };
         let lvlup_free = match advi.get_f64("Free Points on Level-Up > ".cyan()) {
             Some(n) => n,
             None => return None,
@@ -106,6 +126,7 @@ impl EditableItem for Profession {
             lvlup_body,
             lvlup_mind,
             lvlup_spirit,
+            lvlup_soul,
             lvlup_free,
             profession_specific_modifiers,
         ))
@@ -138,6 +159,11 @@ impl EditableItem for Profession {
                 Some(n) => n,
                 None => self.lvlup_spirit,
             };
+        self.lvlup_soul = match advi.get_f64_initial("Soul on Level-Up > ".cyan(), self.lvlup_soul)
+        {
+            Some(n) => n,
+            None => self.lvlup_soul,
+        };
         self.lvlup_free =
             match advi.get_f64_initial("Free Points on Level-Up > ".cyan(), self.lvlup_free) {
                 Some(n) => n,

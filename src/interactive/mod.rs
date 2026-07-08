@@ -45,11 +45,13 @@ impl Interactive {
             if let Some(choice) = self.ed.get_enum_input_default::<CharacterMenu>(
                 "(TAB) > ".green(),
                 true,
-                Some(CharacterMenu::SaveAndExit),
+                Some(CharacterMenu::Exit),
             ) {
                 match choice {
-                    CharacterMenu::SaveAndExit => {
+                    CharacterMenu::Save => {
                         mc.save();
+                    }
+                    CharacterMenu::Exit => {
                         break;
                     }
                     CharacterMenu::Exp => {
@@ -65,7 +67,8 @@ impl Interactive {
                             match ba {
                                 AttributeType::Body
                                 | AttributeType::Mind
-                                | AttributeType::Spirit => {
+                                | AttributeType::Spirit
+                                | AttributeType::Soul => {
                                     let old_value = mc.get_base_attribute(&ba);
                                     if let Some(nmb) =
                                         self.ed.get_f64_initial("> ".green(), old_value)
@@ -78,6 +81,7 @@ impl Interactive {
                                         "{}",
                                         format!("Attribute {} cannot be set directly", ba).red()
                                     );
+                                    _ = self.ed.get_string("Press Enter to continue".italic());
                                 }
                             }
                         }
@@ -100,6 +104,10 @@ impl Interactive {
                                     Some(att) => att.change(),
                                     None => mc.spirit_attunement = Attunement::from_input(),
                                 },
+                                AttributeType::Soul => match &mut mc.soul_attunement {
+                                    Some(att) => att.change(),
+                                    None => mc.soul_attunement = Attunement::from_input(),
+                                },
                                 _ => {
                                     println!(
                                         "{}",
@@ -109,21 +117,22 @@ impl Interactive {
                             }
                         }
                     }
-                    CharacterMenu::EditProfessions => change_items(&mut mc.professions, &mc.name),
-                    CharacterMenu::EditGears => change_items(&mut mc.equipped_gear, &mc.name),
-                    CharacterMenu::EditTraits => change_items(&mut mc.traits, &mc.name),
-                    CharacterMenu::EditSkills => change_items(&mut mc.skills, &mc.name),
-                    CharacterMenu::EditSpells => change_items(&mut mc.spells, &mc.name),
-                    CharacterMenu::EditWeapons => change_items(&mut mc.weapons, &mc.name),
+                    CharacterMenu::Professions => change_items(&mut mc.professions, &mc.name),
+                    CharacterMenu::Gears => change_items(&mut mc.equipped_gear, &mc.name),
+                    CharacterMenu::Traits => change_items(&mut mc.traits, &mc.name),
+                    CharacterMenu::Skills => change_items(&mut mc.skills, &mc.name),
+                    CharacterMenu::Spells => change_items(&mut mc.spells, &mc.name),
+                    CharacterMenu::Weapons => change_items(&mut mc.weapons, &mc.name),
+                    CharacterMenu::Notes => change_items(&mut mc.notes, &mc.name),
                     CharacterMenu::LevelUp => mc.level_up(),
                     CharacterMenu::PrintCharacterSheet => {
                         let mut outfile = mc.file_path.clone();
-                        outfile.set_extension("html");
+                        outfile.set_extension("md");
                         let mut file =
                             fs::File::create(&outfile).expect("Trouble creating output file");
                         file.write_all(mc.pretty_print().as_bytes())
                             .expect("Trouble writing output file");
-                        println!("HTML-Output saved to:\n- {:#?}", outfile);
+                        println!("Markdown-Output saved to:\n- {:#?}", outfile);
                         _ = self.ed.get_string("Press Enter to continue".italic());
                     }
                 }
@@ -182,14 +191,16 @@ pub enum CharacterMenu {
     Exp,
     LevelUp,
     Attunement,
-    EditProfessions,
-    EditGears,
-    EditTraits,
-    EditSkills,
-    EditSpells,
-    EditWeapons,
+    Professions,
+    Gears,
+    Traits,
+    Skills,
+    Spells,
+    Weapons,
+    Notes,
     PrintCharacterSheet,
-    SaveAndExit,
+    Save,
+    Exit,
 }
 impl PromptableEnum for CharacterMenu {}
 

@@ -6,6 +6,7 @@ use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::{Display, EnumIter, EnumString};
+use thousands::Separable;
 
 /// Represents the type of Weapon
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, EnumIter, EnumString, Display)]
@@ -29,10 +30,11 @@ impl fmt::Display for Weapon {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "{} ({}) - Damage Factor: {:.1}",
+            "{} ({}) - Damage Factor: {:.1}\n{}",
             self.name,
             self.weapon_type.display_name(),
-            self.factor
+            self.factor,
+            self.description
         )
     }
 }
@@ -41,7 +43,7 @@ fn get_attribute(weapon_type: &WeaponType) -> AttributeType {
     match weapon_type {
         WeaponType::Melee => AttributeType::BasicDamageMelee,
         WeaponType::Ranged => AttributeType::BasicDamageRanged,
-        WeaponType::SoulWeapon => AttributeType::BasicDamageMagic,
+        WeaponType::SoulWeapon => AttributeType::BasicDamageSoul,
     }
 }
 
@@ -121,15 +123,15 @@ impl EditableItem for Weapon {
 impl PrintableItem for Weapon {
     fn pretty_print(&self, character: &Character) -> String {
         format!(
-            "<b>{}:</b> {:.2} Damage<br/>╰╼({}, Factor: {:.1})<br/>{}",
+            "| **{}:** {} Damage\n| ╰╼({}, Factor: {:.1}){}",
             self.name,
-            self.get_output(&character),
+            format!("{:.2}", self.get_output(&character)).separate_with_commas(),
             self.weapon_type.display_name(),
             self.factor,
             if self.description.is_empty() {
                 String::new()
             } else {
-                format!("╰╼<i>{}</i><br/>", self.description)
+                format!("\n| ╰╼*{}*", self.description)
             }
         )
     }

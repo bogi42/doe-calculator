@@ -355,7 +355,13 @@ impl Character {
                                 modifier.value
                             }
                         }
-                        ModifierType::Percentage => percentage_modifier += modifier.value,
+                        ModifierType::Percentage => {
+                            percentage_modifier += if modifier.value == 0.0 {
+                                (self.level as f64) / 100.0
+                            } else {
+                                modifier.value
+                            }
+                        }
                     }
                 }
             }
@@ -461,7 +467,7 @@ impl Character {
         print_line();
         /* Base Damages */
         println!(
-            "Damage: {:>15}{:>8}{:>15}{:>8}{:>15}{:>8}{:15}{:>8}",
+            "Damage: {:>15}{:>8}{:>15}{:>8}{:>15}{:>8}{:>15}{:>8}",
             "Melee",
             format!(
                 "{:.0}",
@@ -566,7 +572,7 @@ impl Character {
     pub fn pretty_print(&self) -> String {
         let mut lines: Vec<String> = Vec::new();
         /* find Class */
-        let class = if self.professions.len() == 0 {
+        let class = if self.professions.is_empty() {
             "No class".to_string()
         } else {
             match self.professions.iter().find(|p| p.level == 0) {
@@ -574,11 +580,12 @@ impl Character {
                 None => "No class".to_string(),
             }
         };
-        lines.push(format!("{}", "<span class=\"u\">Status</span>"));
-        lines.push(format!("<b>Name:</b> {}<br/>", self.name));
-        lines.push(format!("<b>Class:</b> {}<br/>", class));
+        /* Status Section */
+        lines.push(format!("| [Status]{{.u}}"));
+        lines.push(format!("| **Name:** {}", self.name));
+        lines.push(format!("| **Class:** {}", class));
         lines.push(format!(
-            "<b>Level/Exp:</b> {} ({}/{} [{:.2} %])<br/>",
+            "| **Level/Exp:** {} ({}/{} [{:.2} %])",
             self.level,
             self.experience.separate_with_commas(),
             self.get_exp_needed().separate_with_commas(),
@@ -587,7 +594,7 @@ impl Character {
         /* Professions */
         for prof in self.professions.iter().filter(|&p| p.level > 0) {
             lines.push(format!(
-                "<b>Profession:</b> {} (Tier {})<br/>",
+                "| **Profession:** {} (Tier {})",
                 prof.name, prof.level
             ));
         }
@@ -598,28 +605,33 @@ impl Character {
             (AttributeType::Stamina, AttributeType::StaminaRegen),
         ] {
             lines.push(format!(
-                "<b>{0}:</b> {1}/{1} ({2}/s)<br/>",
+                "| **{0}:** {1}/{1} ({2}/s)",
                 lhs,
                 format!("{:.0}", self.calculate_final_attribute(&lhs)).separate_with_commas(),
                 format!("{:.2}", self.calculate_final_attribute(&rhs)).separate_with_commas()
             ));
         }
-        lines.push(format!("<span class=\"u\">Primary Attributes</span>"));
+
+        /* Primary Attributes Section */
+        lines.push(format!("| [Primary Attributes]{{.u}}"));
         /* Base Attributes and their final values */
         for a in vec![
             AttributeType::Body,
             AttributeType::Mind,
             AttributeType::Spirit,
+            AttributeType::Soul,
         ] {
             lines.push(format!(
-                "<b>{}:</b> {} (base: {})<br/>",
+                "| **{}:** {} (base: {})",
                 a,
                 format!("{:.0}", self.calculate_final_attribute(&a)).separate_with_commas(),
                 format!("{:.0}", self.get_base_attribute(&a)).separate_with_commas()
             ));
-            lines.push(format!("╰╼({})<br/>", self.get_attunement_string(&a)));
+            lines.push(format!("| ╰╼({})", self.get_attunement_string(&a)));
         }
-        lines.push(format!("<span class=\"u\">Derived Attributes</span>"));
+
+        /* Derived Attributes Section */
+        lines.push(format!("| [Derived Attributes]{{.u}}"));
         /* Resistances and Damage */
         for res in vec![
             AttributeType::PhysicalResistance,
@@ -627,104 +639,95 @@ impl Character {
             AttributeType::BasicDamageMelee,
             AttributeType::BasicDamageRanged,
             AttributeType::BasicDamageMagic,
+            AttributeType::BasicDamageSoul,
         ] {
             lines.push(format!(
-                "<b>{}:</b> {}<br/>",
+                "| **{}:** {}",
                 add_spaces_before_caps(&format!("{}", res)),
                 format!("{:.0}", self.calculate_final_attribute(&res)).separate_with_commas()
             ));
         }
-        /* print multiple Lists of printabe items */
-        for (item_type, item_list) in vec![
-            (
-                "Spell List",
-                &self
-                    .spells
-                    .iter()
-                    .map(|v| PrintableItemVariant::Spell(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Skill List",
-                &self
-                    .skills
-                    .iter()
-                    .map(|v| PrintableItemVariant::Skill(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Attunements",
-                &self
-                    .equipped_gear
-                    .iter()
-                    .filter(|g| g.gear_type == GearType::Attunement)
-                    .map(|v| PrintableItemVariant::Gear(v.clone()))
-                    .collect() as &Vec<PrintableItemVariant>,
-            ),
-            (
-                "Bone Glyphs",
-                &self
-                    .equipped_gear
-                    .iter()
-                    .filter(|g| g.gear_type == GearType::BoneGlyph)
-                    .map(|v| PrintableItemVariant::Gear(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Bonds",
-                &self
-                    .equipped_gear
-                    .iter()
-                    .filter(|g| g.gear_type == GearType::Bond)
-                    .map(|v| PrintableItemVariant::Gear(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Weapons",
-                &self
-                    .weapons
-                    .iter()
-                    .map(|v| PrintableItemVariant::Weapon(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Equipment",
-                &self
-                    .equipped_gear
-                    .iter()
-                    .filter(|g| g.gear_type == GearType::Equipment)
-                    .map(|v| PrintableItemVariant::Gear(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Character Traits",
-                &self
-                    .traits
-                    .iter()
-                    .map(|v| PrintableItemVariant::CharacterTrait(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Titles",
-                &self
-                    .equipped_gear
-                    .iter()
-                    .filter(|g| g.gear_type == GearType::Title)
-                    .map(|v| PrintableItemVariant::Gear(v.clone()))
-                    .collect(),
-            ),
-            (
-                "Notes",
-                &self
-                    .notes
-                    .iter()
-                    .map(|v| PrintableItemVariant::Note(v.clone()))
-                    .collect(),
-            ),
-        ] {
-            lines.push(format!("<span class=\"u\">{}</span>", item_type));
-            for item in item_list {
-                lines.push(item.pretty_print(&self));
+
+        /* print multiple Lists of printable items */
+        let spells: Vec<PrintableItemVariant> = self
+            .spells
+            .iter()
+            .map(|v| PrintableItemVariant::Spell(v.clone()))
+            .collect();
+        let skills: Vec<PrintableItemVariant> = self
+            .skills
+            .iter()
+            .map(|v| PrintableItemVariant::Skill(v.clone()))
+            .collect();
+        let attunements: Vec<PrintableItemVariant> = self
+            .equipped_gear
+            .iter()
+            .filter(|g| g.gear_type == GearType::Attunement)
+            .map(|v| PrintableItemVariant::Gear(v.clone()))
+            .collect();
+        let bone_glyphs: Vec<PrintableItemVariant> = self
+            .equipped_gear
+            .iter()
+            .filter(|g| g.gear_type == GearType::BoneGlyph)
+            .map(|v| PrintableItemVariant::Gear(v.clone()))
+            .collect();
+        let bonds: Vec<PrintableItemVariant> = self
+            .equipped_gear
+            .iter()
+            .filter(|g| g.gear_type == GearType::Bond)
+            .map(|v| PrintableItemVariant::Gear(v.clone()))
+            .collect();
+        let weapons: Vec<PrintableItemVariant> = self
+            .weapons
+            .iter()
+            .map(|v| PrintableItemVariant::Weapon(v.clone()))
+            .collect();
+        let equipment: Vec<PrintableItemVariant> = self
+            .equipped_gear
+            .iter()
+            .filter(|g| g.gear_type == GearType::Equipment)
+            .map(|v| PrintableItemVariant::Gear(v.clone()))
+            .collect();
+        let traits: Vec<PrintableItemVariant> = self
+            .traits
+            .iter()
+            .map(|v| PrintableItemVariant::CharacterTrait(v.clone()))
+            .collect();
+        let titles: Vec<PrintableItemVariant> = self
+            .equipped_gear
+            .iter()
+            .filter(|g| g.gear_type == GearType::Title)
+            .map(|v| PrintableItemVariant::Gear(v.clone()))
+            .collect();
+        let notes: Vec<PrintableItemVariant> = self
+            .notes
+            .iter()
+            .map(|v| PrintableItemVariant::Note(v.clone()))
+            .collect();
+
+        let item_sections: Vec<(&str, Vec<PrintableItemVariant>)> = vec![
+            ("Spell List", spells),
+            ("Skill List", skills),
+            ("Attunements", attunements),
+            ("Bone Glyphs", bone_glyphs),
+            ("Bonds", bonds),
+            ("Weapons", weapons),
+            ("Equipment", equipment),
+            ("Character Traits", traits),
+            ("Titles", titles),
+            ("Notes", notes),
+        ];
+        for (item_type, item_list) in item_sections.iter() {
+            if !item_list.is_empty() {
+                // Add empty line separator before section
+                lines.push("| ".to_string());
+                lines.push(format!("| [{}]{{.u}}", item_type));
+                for item in item_list {
+                    // Split multi-line output and add each line
+                    for line in item.pretty_print(&self).split('\n') {
+                        lines.push(line.to_string());
+                    }
+                }
             }
         }
         lines.join("\n")

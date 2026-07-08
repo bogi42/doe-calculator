@@ -1,5 +1,6 @@
 use crate::clear_screen;
 use crate::gear::Gear;
+use crate::notes::Note;
 use crate::skill::Skill;
 use crate::spell::Spell;
 use crate::traits::CharacterTrait;
@@ -29,6 +30,7 @@ pub enum PrintableItemVariant {
     Spell(Spell),
     Skill(Skill),
     Weapon(Weapon),
+    Note(Note),
 }
 impl PrintableItem for PrintableItemVariant {
     fn pretty_print(&self, c: &Character) -> String {
@@ -38,6 +40,7 @@ impl PrintableItem for PrintableItemVariant {
             Self::Spell(v) => v.pretty_print(c),
             Self::Skill(v) => v.pretty_print(c),
             Self::Weapon(v) => v.pretty_print(c),
+            Self::Note(v) => v.pretty_print(c),
         }
     }
 }

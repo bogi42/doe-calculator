@@ -44,6 +44,6 @@ impl EditableItem for CharacterTrait {
 
 impl PrintableItem for CharacterTrait {
     fn pretty_print(&self, _character: &Character) -> String {
-        format!("- {}<br/>", &self.description)
+        format!("| - {}", &self.description)
     }
 }

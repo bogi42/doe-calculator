@@ -4,6 +4,7 @@ use advanced_inputs::AdvInput;
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::fmt;
+use thousands::Separable;
 
 /// Represents a skill
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -48,8 +49,9 @@ impl Skill {
             "(passive)".to_string()
         } else {
             format!(
-                "({:.0} Stamina / {} Cooldown)",
-                self.stamina_cost, self.cooldown
+                "({} Stamina / {} Cooldown)",
+                format!("{:0}", self.stamina_cost).separate_with_commas(),
+                self.cooldown
             )
         }
     }
@@ -133,14 +135,14 @@ impl EditableItem for Skill {
 impl PrintableItem for Skill {
     fn pretty_print(&self, _character: &Character) -> String {
         format!(
-            "<b>{}:</b> {}<br/>╰╼{}<br/>{}",
+            "| **{}:** {}\n| ╰╼{}{}",
             self.name,
             self.main_effect,
             self.get_cost_cd(),
             if self.additional_effect.is_empty() {
                 String::new()
             } else {
-                format!("╰╼({})<br/>", self.additional_effect)
+                format!("\n| ╰╼({})", self.additional_effect)
             }
         )
     }

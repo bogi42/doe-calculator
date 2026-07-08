@@ -2,6 +2,7 @@ mod attributes;
 mod character;
 mod gear;
 mod interactive;
+mod notes;
 mod profession;
 mod skill;
 mod spell;

@@ -6,6 +6,7 @@ use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::{Display, EnumIter, EnumString};
+use thousands::Separable;
 
 /// Represents the type of spell
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, EnumIter, EnumString, Display)]
@@ -69,7 +70,11 @@ impl Spell {
                 let value = character
                     .calculate_final_attribute(&self.used_attribute.as_ref().unwrap())
                     * self.factor;
-                format!("{:.2} {}", value, self.spell_type)
+                format!(
+                    "{} {}",
+                    format!("{:.2}", value).separate_with_commas(),
+                    self.spell_type
+                )
             }
         }
     }
@@ -203,15 +208,15 @@ impl EditableItem for Spell {
 impl PrintableItem for Spell {
     fn pretty_print(&self, character: &Character) -> String {
         format!(
-            "<b>{}:</b> {}<br/>╰╼({:.0} Mana / {})<br/>{}",
+            "| **{}:** {}\n| ╰╼({} Mana / {}){}",
             self.name,
             self.get_output(&character),
-            self.mana_cost,
+            format!("{:.0}", self.mana_cost).separate_with_commas(),
             self.cooldown,
             if self.additional_effect.is_empty() {
                 String::new()
             } else {
-                format!("╰╼({})<br/>", self.additional_effect)
+                format!("\n| ╰╼({})", self.additional_effect)
             }
         )
     }

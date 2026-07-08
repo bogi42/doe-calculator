@@ -22,6 +22,8 @@ impl PromptableEnum for GearType {}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Gear {
     pub name: String,
+    #[serde(default)]
+    pub description: String,
     pub gear_type: GearType,
     pub modifiers: Vec<Modifier>, // A vector of modifiers applied by this gear
 }
@@ -38,19 +40,26 @@ impl fmt::Display for Gear {
         };
         write!(
             f,
-            "{} ({}) - {} specific modifiers{}",
+            "{} ({}) - {} specific modifiers\n{}\n{}",
             self.name.bold().cyan(),
             self.gear_type.display_name(),
             self.modifiers.len(),
+            self.description.italic(),
             mods.italic()
         )
     }
 }
 
 impl Gear {
-    pub fn new(name: String, gear_type: GearType, modifiers: Vec<Modifier>) -> Self {
+    pub fn new(
+        name: String,
+        description: String,
+        gear_type: GearType,
+        modifiers: Vec<Modifier>,
+    ) -> Self {
         Gear {
             name: name.into(),
+            description,
             gear_type,
             modifiers,
         }
@@ -62,6 +71,10 @@ impl EditableItem for Gear {
         println!("{:^100}", "Create a new Gear:".bold().underline());
         let mut advi = AdvInput::new();
         let name = match advi.get_string("Enter Name > ".green()) {
+            Some(s) => s,
+            None => return None,
+        };
+        let description = match advi.get_string("Description > ".green()) {
             Some(s) => s,
             None => return None,
         };
@@ -81,7 +94,7 @@ impl EditableItem for Gear {
         if modifiers.is_empty() {
             None
         } else {
-            Some(Gear::new(name, gear_type, modifiers))
+            Some(Gear::new(name, description, gear_type, modifiers))
         }
     }
 
@@ -92,6 +105,11 @@ impl EditableItem for Gear {
             Some(s) => s,
             None => self.name.clone(),
         };
+        self.description =
+            match advi.get_string_initial("Description > ".green(), &self.description) {
+                Some(s) => s,
+                None => self.description.clone(),
+            };
         self.gear_type = match advi.get_enum_input_initial::<GearType>(
             "What type? (TAB) > ".green(),
             Some(self.gear_type.clone()),
@@ -113,12 +131,18 @@ impl PrintableItem for Gear {
         /* build list of Modifiers */
         let mut mod_list: Vec<String> = Vec::new();
         for modifier in &self.modifiers {
-            mod_list.push(format!("- {}<br/>", modifier));
+            mod_list.push(format!("| - {}", modifier));
         }
+        let description_line = if self.description.is_empty() {
+            String::new()
+        } else {
+            format!("| *{}*", self.description)
+        };
         format!(
-            "<b>{}</b> ({})<br/>\n{}",
+            "| **{}** ({})\n{}{}",
             self.name,
             self.gear_type.display_name(),
+            description_line,
             mod_list.join("\n")
         )
     }
